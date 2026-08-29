@@ -1,0 +1,26 @@
+# ── Résultats d'audit générés (JAMAIS de vrais logs sur GitHub) ──
+logs/*
+!logs/.gitkeep
+*.log
+*.jsonl
+!tests/fixtures/*.jsonl
+
+# ── Secrets ──
+.env
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
+
+# ── Temporaire ──
+tmp/
+.cache/
+*.swp
+*~
+
+# ── OS / éditeurs ──
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

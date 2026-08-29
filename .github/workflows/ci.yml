@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérification syntaxe bash
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            echo "::group::bash -n $f"
+            bash -n "$f" || fail=1
+            echo "::endgroup::"
+          done < <(find scripts tests -name '*.sh' -type f)
+          exit $fail
+
+      - name: ShellCheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y shellcheck
+          find scripts tests -name '*.sh' -type f -print0 \
+            | xargs -0 -r shellcheck -S error -x
+
+  contract:
+    name: contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Le contrat JSON est respecté
+        run: bash tests/test_json.sh
+
+  config:
+    name: config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: XML Wazuh bien formé
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y libxml2-utils
+          for f in $(find wazuh -name '*.xml'); do
+            echo "checking $f"
+            xmllint --noout "$f"
+          done
+
+      - name: JSON Grafana bien formé
+        run: |
+          shopt -s nullglob
+          for f in grafana/dashboard/*.json grafana/**/*.json; do
+            echo "checking $f"
+            jq -e . "$f" > /dev/null
+          done

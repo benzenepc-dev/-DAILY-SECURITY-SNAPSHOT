@@ -1,0 +1,19 @@
+# Fins de ligne : le projet tourne sur Linux.
+# Un script Shell en CRLF échoue avec "bad interpreter: /usr/bin/env bash^M".
+* text=auto eol=lf
+
+*.sh   text eol=lf
+*.py   text eol=lf
+*.conf text eol=lf
+*.yml  text eol=lf
+*.xml  text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.md   text eol=lf
+cron/* text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
