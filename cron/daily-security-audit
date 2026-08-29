@@ -1,0 +1,7 @@
+# /etc/cron.d/daily-security-audit
+# Propriétaire : Vincent Mactar Senghor
+# Audit de sécurité quotidien à 02:00
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+0 2 * * * root /opt/daily-security-snapshot/scripts/security_audit.sh >> /var/log/daily-security-snapshot/cron.log 2>&1

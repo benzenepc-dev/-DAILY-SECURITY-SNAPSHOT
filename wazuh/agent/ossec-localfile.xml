@@ -1,0 +1,11 @@
+<!--
+  Bloc à insérer dans /var/ossec/etc/ossec.conf de l'AGENT Wazuh
+  (à l'intérieur de <ossec_config>).
+  Propriétaire : Ahmad Abdou Malick Diop
+-->
+<ossec_config>
+  <localfile>
+    <location>/var/log/daily-security-snapshot/audit.jsonl</location>
+    <log_format>json</log_format>
+  </localfile>
+</ossec_config>

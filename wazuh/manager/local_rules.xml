@@ -1,0 +1,51 @@
+<!--
+  À concaténer dans /var/ossec/etc/rules/local_rules.xml du MANAGER Wazuh.
+  Propriétaire : Ahmad Abdou Malick Diop
+  Plage d'ID personnalisés recommandée par Wazuh : 100000-120000.
+  Tester avec :  sudo /var/ossec/bin/wazuh-logtest
+-->
+<group name="daily_security_snapshot,">
+
+  <!-- Règle mère : tout événement de notre audit -->
+  <rule id="110000" level="0">
+    <decoded_as>json</decoded_as>
+    <field name="run_id">\.</field>
+    <field name="audit">\.</field>
+    <description>Daily Security Snapshot event</description>
+  </rule>
+
+  <rule id="110001" level="3">
+    <if_sid>110000</if_sid>
+    <field name="status">^PASS$</field>
+    <description>DSS: check passed - $(check) on $(resource)</description>
+  </rule>
+
+  <rule id="110010" level="5">
+    <if_sid>110000</if_sid>
+    <field name="status">^FAIL$</field>
+    <field name="severity">^low$</field>
+    <description>DSS low: $(check) - $(resource)</description>
+  </rule>
+
+  <rule id="110011" level="7">
+    <if_sid>110000</if_sid>
+    <field name="status">^FAIL$</field>
+    <field name="severity">^medium$</field>
+    <description>DSS medium: $(check) - $(resource)</description>
+  </rule>
+
+  <rule id="110012" level="10">
+    <if_sid>110000</if_sid>
+    <field name="status">^FAIL$</field>
+    <field name="severity">^high$</field>
+    <description>DSS high: $(check) - $(resource)</description>
+  </rule>
+
+  <rule id="110013" level="12">
+    <if_sid>110000</if_sid>
+    <field name="status">^FAIL$</field>
+    <field name="severity">^critical$</field>
+    <description>DSS critical: $(check) - $(resource)</description>
+  </rule>
+
+</group>

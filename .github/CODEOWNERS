@@ -1,0 +1,32 @@
+# CODEOWNERS — chaque zone a UN propriétaire.
+# GitHub demande automatiquement la review du propriétaire quand une PR touche sa zone.
+# Format : <chemin>  <@compte-github>
+# ⚠️ REMPLACER les @pseudos ci-dessous par les vrais comptes GitHub des membres.
+
+# Coordinateur / intégrateur : voit passer tout ce qui est transverse
+*                               @benzenepc-dev
+
+# Vincent Mactar Senghor — moteur, contrat JSON, cron
+/scripts/security_audit.sh      @vincent-github
+/scripts/lib/common.sh          @vincent-github
+/scripts/install.sh             @vincent-github
+/cron/                          @vincent-github
+/config/audit.conf              @vincent-github
+
+# Diembi Daniel Emmanuel — permissions / SUID / fichiers
+/scripts/lib/permissions.sh     @daniel-github
+/tests/test_permissions.sh      @daniel-github
+
+# Mamadou Diop — réseau / ports / services / firewall
+/scripts/lib/network.sh         @mamadou-github
+/scripts/lib/services.sh        @mamadou-github
+/config/allowed_ports.conf      @mamadou-github
+/tests/test_network.sh          @mamadou-github
+
+# Ahmad Abdou Malick Diop — Wazuh / SIEM
+/wazuh/                         @ahmad-github
+/docs/wazuh.md                  @ahmad-github
+
+# Papa Mamadou Ba — Grafana / dashboard
+/grafana/                       @papa-github
+/docs/grafana.md                @papa-github
