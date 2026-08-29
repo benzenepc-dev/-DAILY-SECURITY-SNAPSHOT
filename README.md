@@ -252,70 +252,62 @@ de 48 h.** Si personne ne relit, le projet s'arrête.
 
 ## 8. Protections GitHub à mettre en place
 
-### ⚠️ État actuel
+### ✅ Ce qui est DÉJÀ actif sur le dépôt
 
-Le dépôt est **privé sur un compte GitHub gratuit** : GitHub y **désactive** les
-protections de branche et les rulesets (message : *« Upgrade to GitHub Pro or make
-this repository public to enable this feature »*). Trois options :
+Le dépôt a été passé en **public** : GitHub réserve les protections de branche aux
+dépôts publics ou aux comptes Pro (message rencontré en privé/gratuit :
+*« Upgrade to GitHub Pro or make this repository public to enable this feature »*).
 
-| Option | Conséquence |
-|---|---|
-| **Rendre le dépôt public** (recommandé pour un projet académique) | Protections gratuites immédiatement. Le `.gitignore` du projet interdit déjà logs, clés et `.env` |
-| Passer le compte en **GitHub Pro** | Le dépôt reste privé, protections activées |
-| Rester privé sans protection | Les règles ci-dessous deviennent des **règles d'équipe** : rien ne les empêche techniquement, tout repose sur la discipline |
+**Sur `main` et `develop` :**
 
-### Réglages à appliquer dès que les protections sont disponibles
+| Protection | `main` | `develop` |
+|---|---|---|
+| Pull Request obligatoire avant tout merge | ✅ | ✅ |
+| Nombre d'approbations requises | 1 | 1 |
+| Les approbations sautent si on repousse du code | ✅ | ✅ |
+| CI verte obligatoire (`lint`, `contract`, `config`) | ✅ | ✅ |
+| Branche à jour avec la cible avant merge | ✅ | ❌ (pour ne pas ralentir l'équipe) |
+| Toutes les discussions résolues avant merge | ✅ | ✅ |
+| Historique linéaire (squash only) | ✅ | ❌ |
+| `git push --force` | 🚫 bloqué | 🚫 bloqué |
+| Suppression de la branche | 🚫 bloquée | 🚫 bloquée |
 
-`Settings → Branches → Add branch protection rule`
+**Sur le dépôt :**
 
-**Règle sur `main` :**
+- Branche par défaut : **`develop`** (toute nouvelle PR vise `develop`, pas `main`)
+- Seul le **squash merge** est autorisé (merge commits et rebase désactivés)
+- Suppression automatique des branches après merge
+- Bouton « Update branch » disponible sur les PR en retard
 
-| Réglage | Valeur |
-|---|---|
-| Require a pull request before merging | ✅ |
-| ↳ Require approvals | **2** |
-| ↳ Dismiss stale approvals when new commits are pushed | ✅ |
-| ↳ Require review from Code Owners | ✅ |
-| Require status checks to pass | ✅ → `lint`, `contract`, `config` |
-| ↳ Require branches to be up to date before merging | ✅ |
-| Require conversation resolution before merging | ✅ |
-| Require linear history | ✅ |
-| Do not allow bypassing the above settings | ✅ |
-| Allow force pushes / Allow deletions | ❌ / ❌ |
+### ⚠️ Les 3 choses qu'il reste à faire à la main
 
-**Règle sur `develop` :** identique, mais **1 seule approbation** (sinon le groupe
-s'auto-bloque) et sans « require linear history ».
+1. **Ajouter les 4 autres membres** — `Settings → Collaborators → Add people`,
+   rôle **Write** (surtout pas Admin : Admin permet de contourner les protections).
 
-### Autres réglages, disponibles même en privé/gratuit
+2. **Corriger `.github/CODEOWNERS`** — remplacer `@daniel-github`, `@mamadou-github`,
+   `@vincent-github`, `@ahmad-github`, `@papa-github` par les vrais comptes GitHub.
+   Puis activer `Require review from Code Owners` sur `main` et `develop`.
+   > La revue par Code Owners est volontairement **désactivée pour l'instant** :
+   > avec des pseudos qui n'existent pas, GitHub rendrait toutes les PR non
+   > fusionnables.
 
-`Settings → General → Pull Requests`
+3. **Une fois les 5 membres ajoutés**, durcir `main` :
+   - passer les approbations requises de **1 à 2**
+   - cocher **Do not allow bypassing the above settings**
+   > Aujourd'hui l'administrateur (`benzenepc-dev`) peut encore pousser
+   > directement : c'est l'issue de secours pendant l'amorçage, tant que
+   > personne d'autre n'a accès pour approuver une PR.
 
-- ☑ Allow squash merging — **et décocher merge commits et rebase merging**
-  (un squash = un commit propre par fonctionnalité dans `develop`)
-- ☑ Automatically delete head branches (les branches mergées disparaissent toutes seules)
-- ☑ Always suggest updating pull request branches
+### Le garde-fou automatique
 
-`Settings → General → Default branch` → **mettre `develop`**
-(pour que toute nouvelle PR vise `develop` par défaut, pas `main`)
-
-`Settings → Collaborators` → ajouter les 4 autres membres en rôle **Write**
-(surtout pas Admin : ça permettrait de contourner les protections)
-
-### Le garde-fou qui, lui, marche déjà
-
-La CI [`.github/workflows/ci.yml`](.github/workflows/ci.yml) tourne sur chaque PR,
-protections ou pas, et signale en rouge :
+La CI [`.github/workflows/ci.yml`](.github/workflows/ci.yml) tourne sur chaque PR
+et bloque le merge tant qu'elle est rouge :
 
 | Job | Ce qu'il vérifie |
 |---|---|
 | `lint` | `bash -n` + `shellcheck` sur tous les scripts |
-| `contract` | Le format JSON du groupe est respecté |
+| `contract` | Le format JSON du groupe est respecté (`tests/test_json.sh`) |
 | `config` | Le XML Wazuh et le JSON Grafana sont bien formés |
-
-**Règle d'équipe : on ne merge jamais une PR dont la CI est rouge**, même si GitHub
-laisse techniquement le bouton cliquable.
-
----
 
 ## 9. Les commandes Git à connaître
 
