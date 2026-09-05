@@ -16,6 +16,8 @@
 # Diembi Daniel Emmanuel — permissions / SUID / fichiers
 /scripts/lib/permissions.sh     @daniel-github
 /tests/test_permissions.sh      @daniel-github
+/config/allowed_suid.conf       @daniel-github
+/docs/permissions.md            @daniel-github
 
 # Mamadou Diop — réseau / ports / services / firewall
 /scripts/lib/network.sh         @mamadou-github
