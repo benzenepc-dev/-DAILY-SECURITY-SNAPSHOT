@@ -1,0 +1,33 @@
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.13.0
+    container_name: opensearch-local
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=true   # simplifie les tests en local (jamais en prod)
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=SecurLocal!2026
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: grafana-local
+    depends_on:
+      - opensearch
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-opensearch-datasource
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning/datasource.local.yml:/etc/grafana/provisioning/datasources/datasource.local.yml
+      - ./grafana/provisioning/dashboard-provider.yml:/etc/grafana/provisioning/dashboards/dashboard-provider.yml
+      - ./grafana/dashboard:/var/lib/grafana/dashboards/daily-security-snapshot
+
+volumes:
+  opensearch-data:
