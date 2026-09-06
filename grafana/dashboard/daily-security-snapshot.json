@@ -66,7 +66,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "/^D$/",
           "values": false
@@ -78,12 +78,12 @@
       "pluginVersion": "11.1.0",
       "targets": [
         {
-          "alias": "severity",
+          "alias": "critical",
           "bucketAggs": [
             {
               "id": "1",
               "settings": {
-                "interval": "auto"
+                "interval": "1y"
               },
               "type": "date_histogram"
             }
@@ -99,7 +99,8 @@
               "type": "count"
             }
           ],
-          "query": "status:FAIL",
+          "query": " data.severity:critical AND data.status:FAIL",
+          "queryType": "lucene",
           "refId": "A",
           "timeField": "@timestamp"
         },
@@ -110,7 +111,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "auto"
+                "interval": "1y"
               },
               "type": "date_histogram"
             }
@@ -128,7 +129,7 @@
               "type": "count"
             }
           ],
-          "query": "severity:high AND status:FAIL",
+          "query": "data.severity:high AND data.status:FAIL",
           "queryType": "lucene",
           "refId": "B",
           "timeField": "@timestamp"
@@ -140,7 +141,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "auto"
+                "interval": "1y"
               },
               "type": "date_histogram"
             }
@@ -158,7 +159,7 @@
               "type": "count"
             }
           ],
-          "query": "severity:medium AND status:FAIL",
+          "query": "data.severity:medium AND data.status:FAIL",
           "queryType": "lucene",
           "refId": "C",
           "timeField": "@timestamp"
@@ -173,30 +174,9 @@
           "hide": false,
           "refId": "D",
           "type": "math"
-        },
-        {
-          "datasource": {
-            "name": "Expression",
-            "type": "__expr__",
-            "uid": "__expr__"
-          },
-          "hide": false,
-          "refId": "E",
-          "type": "math"
         }
       ],
       "title": "Score de sécurité",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": {
-              "reducer": "sum"
-            }
-          }
-        }
-      ],
       "type": "gauge"
     },
     {
@@ -283,7 +263,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "auto"
+                "interval": "1y"
               },
               "type": "date_histogram"
             }
@@ -301,7 +281,7 @@
               "type": "count"
             }
           ],
-          "query": "severity:critical AND status:FAIL",
+          "query": " data.severity:critical AND data.status:FAIL",
           "queryType": "lucene",
           "refId": "B",
           "timeField": "@timestamp"
@@ -313,7 +293,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "auto"
+                "interval": "1y"
               },
               "type": "date_histogram"
             }
@@ -331,7 +311,7 @@
               "type": "count"
             }
           ],
-          "query": "severity:high AND status:FAIL",
+          "query": "data.severity:high AND data.status:FAIL",
           "queryType": "lucene",
           "refId": "A",
           "timeField": "@timestamp"
@@ -343,7 +323,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "auto"
+                "interval": "1y"
               },
               "type": "date_histogram"
             }
@@ -361,7 +341,7 @@
               "type": "count"
             }
           ],
-          "query": "severity:medium AND status:FAIL",
+          "query": "data.severity:medium AND data.status:FAIL",
           "queryType": "lucene",
           "refId": "C",
           "timeField": "@timestamp"
@@ -410,7 +390,7 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "tooltip": {
           "mode": "single",
@@ -421,7 +401,7 @@
         {
           "bucketAggs": [
             {
-              "field": "audit",
+              "field": "data.audit.keyword",
               "id": "2",
               "settings": {
                 "order": "desc",
@@ -435,30 +415,31 @@
             "type": "grafana-opensearch-datasource",
             "uid": "PD3F819237BBC744D"
           },
-          "luceneQueryType": "Traces",
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
-              "settings": {
-                "order": "desc",
-                "size": "500",
-                "useTimeRange": true
-              },
-              "type": "raw_document"
+              "type": "count"
             }
           ],
-          "query": "status:FAIL",
+          "query": "data.status:FAIL",
           "refId": "A",
           "timeField": "@timestamp"
         }
       ],
       "title": "Répartition des constats par module",
+      "transformations": [
+        {
+          "id": "rowsToFields",
+          "options": {}
+        }
+      ],
       "type": "piechart"
     },
     {
       "datasource": {
         "type": "grafana-opensearch-datasource",
-        "uid": "Wazuh Indexer"
+        "uid": "PD3F819237BBC744D"
       },
       "fieldConfig": {
         "defaults": {
@@ -541,19 +522,24 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "1d"
+                "interval": "auto"
               },
               "type": "date_histogram"
             }
           ],
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "PD3F819237BBC744D"
+          },
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "status:FAIL",
-          "refId": "A"
+          "query": "data.status:FAIL",
+          "refId": "A",
+          "timeField": "@timestamp"
         },
         {
           "alias": "PASS",
@@ -562,19 +548,24 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "1d"
+                "interval": "auto"
               },
               "type": "date_histogram"
             }
           ],
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "PD3F819237BBC744D"
+          },
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "status:PASS",
-          "refId": "B"
+          "query": "data.status:PASS",
+          "refId": "B",
+          "timeField": "@timestamp"
         }
       ],
       "title": "Évolution des audits dans le temps (PASS vs FAIL)",
@@ -659,19 +650,32 @@
       "pluginVersion": "11.1.0",
       "targets": [
         {
-          "bucketAggs": [],
+          "bucketAggs": [
+            {
+              "id": "1",
+              "settings": {
+                "interval": "1y"
+              },
+              "type": "date_histogram"
+            }
+          ],
           "datasource": {
             "type": "grafana-opensearch-datasource",
             "uid": "PD3F819237BBC744D"
           },
-          "luceneQueryType": "Logs",
+          "luceneQueryType": "RawData",
           "metrics": [
             {
               "id": "2",
-              "type": "logs"
+              "settings": {
+                "order": "desc",
+                "size": "500",
+                "useTimeRange": true
+              },
+              "type": "raw_data"
             }
           ],
-          "query": "status:FAIL",
+          "query": "data.status:FAIL",
           "refId": "A",
           "timeField": "@timestamp"
         }
@@ -680,7 +684,7 @@
       "type": "table"
     }
   ],
-  "refresh": "5m",
+  "refresh": "",
   "schemaVersion": 39,
   "tags": [
     "security",
@@ -691,13 +695,13 @@
     "list": []
   },
   "time": {
-    "from": "now-7d",
-    "to": "now"
+    "from": "2026-08-20T09:26:01.941Z",
+    "to": "2026-09-06T22:45:46.682Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Daily Security Snapshot",
   "uid": "daily-security-snapshot",
-  "version": 2,
+  "version": 9,
   "weekStart": ""
 }
