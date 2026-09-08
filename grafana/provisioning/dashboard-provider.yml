@@ -1,0 +1,15 @@
+# Provider de dashboards Grafana -> charge automatiquement les JSON du dossier grafana/dashboard/
+# Propriétaire : Papa Mamadou Ba
+apiVersion: 1
+
+providers:
+  - name: "Daily Security Snapshot"
+    orgId: 1
+    folder: "Security"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/daily-security-snapshot
+      foldersFromFilesStructure: false
