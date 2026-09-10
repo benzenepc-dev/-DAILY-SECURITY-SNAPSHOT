@@ -1,0 +1,80 @@
+Sortie réelle de `wazuh-logtest` (Wazuh 4.14.7) capturée le 2026-09-10 sur la VM
+de démo (Kali Linux), en rejouant tests/fixtures/example-audit.jsonl contre
+wazuh/manager/local_rules.xml installé sur /var/ossec/etc/rules/local_rules.xml.
+
+Commande :
+  cat tests/fixtures/example-audit.jsonl | /var/ossec/bin/wazuh-logtest
+
+=== Ligne 1 : permissions / world_writable_file / FAIL / high ===
+
+**Phase 1: Completed pre-decoding.
+	full event: '{"timestamp":"2026-08-29T02:00:00Z","run_id":"20260829-020000","hostname":"ubuntu-lab","audit":"permissions","check":"world_writable_file","status":"FAIL","severity":"high","resource":"/tmp/demo-insecure.conf","message":"World writable file detected","recommendation":"chmod o-w /tmp/demo-insecure.conf"}'
+
+**Phase 2: Completed decoding.
+	name: 'json'
+	audit: 'permissions'
+	check: 'world_writable_file'
+	hostname: 'ubuntu-lab'
+	message: 'World writable file detected'
+	recommendation: 'chmod o-w /tmp/demo-insecure.conf'
+	resource: '/tmp/demo-insecure.conf'
+	run_id: '20260829-020000'
+	severity: 'high'
+	status: 'FAIL'
+	timestamp: '2026-08-29T02:00:00Z'
+
+**Phase 3: Completed filtering (rules).
+	id: '110012'
+	level: '10'
+	description: 'DSS high: world_writable_file - /tmp/demo-insecure.conf'
+	groups: '['daily_security_snapshot']'
+	firedtimes: '1'
+	mail: 'False'
+**Alert to be generated.
+
+=== Ligne 2 : network / unexpected_listening_port / FAIL / critical ===
+
+**Phase 3: Completed filtering (rules).
+	id: '110013'
+	level: '12'
+	description: 'DSS critical: unexpected_listening_port - 0.0.0.0:4444'
+	groups: '['daily_security_snapshot']'
+	firedtimes: '1'
+	mail: 'True'
+
+=== Ligne 3 : users / extra_uid0_account / PASS / info ===
+
+**Phase 3: Completed filtering (rules).
+	id: '110001'
+	level: '3'
+	description: 'DSS: check passed - extra_uid0_account on /etc/passwd'
+	groups: '['daily_security_snapshot']'
+	firedtimes: '1'
+	mail: 'False'
+
+=== Résultat ===
+
+Les 3 cas correspondent exactement au tableau de correspondance severity -> level
+documenté dans docs/wazuh.md :
+  severity=high     -> rule 110012 -> level 10
+  severity=critical -> rule 110013 -> level 12
+  status=PASS       -> rule 110001 -> level 3
+
+Bug corrigé au passage : le champ "status" est un nom réservé (statique) dans le
+moteur de règles Wazuh (conflit avec le champ status natif des événements FIM).
+<field name="status"> faisait échouer le chargement de la règle avec l'erreur
+"Field 'status' is static." — corrigé en utilisant la balise dédiée <status>
+(voir wazuh/manager/local_rules.xml et docs/wazuh.md).
+
+Le pipeline complet a aussi été validé en conditions réelles (pas seulement en
+mode wazuh-logtest) : /var/log/daily-security-snapshot/audit.jsonl surveillé par
+wazuh-logcollector sur cette même VM, avec de vraies alertes générées dans
+/var/ossec/logs/alerts/alerts.log après les 3 scénarios de demo/attack-scenarios.md
+(fichier world-writable, port 4444 ouvert, compte UID 0 en trop) :
+
+** Alert : daily_security_snapshot,
+Rule: 110012 (level 10) -> 'DSS high: world_writable_file - /etc/demo-insecure.conf'
+** Alert : daily_security_snapshot,
+Rule: 110013 (level 12) -> 'DSS critical: unexpected_listening_port - 0.0.0.0:4444'
+** Alert : daily_security_snapshot,
+Rule: 110013 (level 12) -> 'DSS critical: unexpected_uid_zero_account - demo-backdoor'

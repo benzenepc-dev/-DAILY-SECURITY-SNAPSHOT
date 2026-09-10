@@ -83,7 +83,14 @@ Validé le 2026-09-10 avec `wazuh-logtest` v4.14.7 sur la VM de démo, avec
 `tests/fixtures/example-audit.jsonl` : `severity=high` → règle `110012`
 (niveau 10), `severity=critical` → règle `110013` (niveau 12),
 `status=PASS` → règle `110001` (niveau 3). Conforme au tableau de la section
-précédente.
+précédente. Transcript complet : [`docs/screenshots/wazuh-logtest-output.txt`](screenshots/wazuh-logtest-output.txt).
+
+Le pipeline complet a aussi été validé en conditions réelles sur cette même VM
+(pas seulement via `wazuh-logtest`) : `wazuh-manager` installé, notre
+`local_rules.xml` chargé, `audit.jsonl` surveillé par `wazuh-logcollector`, et
+les 3 scénarios de `demo/attack-scenarios.md` rejoués ont bien produit de
+vraies alertes dans `/var/ossec/logs/alerts/alerts.log` avec les niveaux
+attendus.
 
 ## Vérifier avant de pousser
 
