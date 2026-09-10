@@ -65,10 +65,18 @@ else
 fi
 
 echo "== 4. chaque module ne produit que des findings valides sur stdout =="
+# AUDIT_ROOT borné à un petit bac à sable : ce test valide le CONTRAT JSON de
+# chaque module, pas son comportement fonctionnel (déjà couvert par
+# tests/test_<module>.sh). Scanner tout '/' ici serait juste lent, y compris
+# en CI, sans rien tester de plus.
+_JSON_SCAN_SANDBOX="$(mktemp -d)"
+touch "$_JSON_SCAN_SANDBOX/sample.txt"
+trap 'rm -rf "$_JSON_SCAN_SANDBOX"' EXIT
+
 for m in permissions network users services firewall; do
     # shellcheck source=/dev/null
     . "scripts/lib/$m.sh"
-    out=$("audit_$m" 2>/dev/null)
+    out=$(AUDIT_ROOT="$_JSON_SCAN_SANDBOX" "audit_$m" 2>/dev/null)
     if [ -z "$out" ]; then
         ok "$m : module encore vide, rien à valider"
     elif printf '%s\n' "$out" | $VALIDATOR >/dev/null; then
