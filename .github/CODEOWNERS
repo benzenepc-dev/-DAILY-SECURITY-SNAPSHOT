@@ -1,25 +1,28 @@
 # CODEOWNERS — chaque zone a UN propriétaire.
 # GitHub demande automatiquement la review du propriétaire quand une PR touche sa zone.
 # Format : <chemin>  <@compte-github>
-# ⚠️ REMPLACER les @pseudos ci-dessous par les vrais comptes GitHub des membres.
+# Comptes GitHub réels renseignés pour Vincent, Daniel et Papa. Mamadou n'a
+# pas encore de compte GitHub connu (aucun commit poussé sous son nom à ce
+# jour) : ⚠️ remplacer @mamadou-github une fois son compte identifié.
 
 # Coordinateur / intégrateur : voit passer tout ce qui est transverse
 *                               @benzenepc-dev
 
 # Vincent Mactar Senghor — moteur, contrat JSON, cron
-/scripts/security_audit.sh      @vincent-github
-/scripts/lib/common.sh          @vincent-github
-/scripts/install.sh             @vincent-github
-/cron/                          @vincent-github
-/config/audit.conf              @vincent-github
+/scripts/security_audit.sh      @mactarsenghor04-sudo
+/scripts/lib/common.sh          @mactarsenghor04-sudo
+/scripts/install.sh             @mactarsenghor04-sudo
+/cron/                          @mactarsenghor04-sudo
+/config/audit.conf              @mactarsenghor04-sudo
 
 # Diembi Daniel Emmanuel — permissions / SUID / fichiers
-/scripts/lib/permissions.sh     @daniel-github
-/tests/test_permissions.sh      @daniel-github
-/config/allowed_suid.conf       @daniel-github
-/docs/permissions.md            @daniel-github
+/scripts/lib/permissions.sh     @DIEMBI
+/tests/test_permissions.sh      @DIEMBI
+/config/allowed_suid.conf       @DIEMBI
+/docs/permissions.md            @DIEMBI
 
 # Mamadou Diop — réseau / ports / services / firewall
+# TODO : remplacer par le vrai compte GitHub de Mamadou une fois connu
 /scripts/lib/network.sh         @mamadou-github
 /scripts/lib/services.sh        @mamadou-github
 /scripts/lib/firewall.sh        @mamadou-github
@@ -31,9 +34,9 @@
 /docs/network.md                @mamadou-github
 
 # Ahmad Abdou Malick Diop — Wazuh / SIEM
-/wazuh/                         @ahmad-github
-/docs/wazuh.md                  @ahmad-github
+/wazuh/                         @benzenepc-dev
+/docs/wazuh.md                  @benzenepc-dev
 
 # Papa Mamadou Ba — Grafana / dashboard
-/grafana/                       @papa-github
-/docs/grafana.md                @papa-github
+/grafana/                       @Papamamadou04
+/docs/grafana.md                @Papamamadou04
