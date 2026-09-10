@@ -3,6 +3,17 @@
   Propriétaire : Ahmad Abdou Malick Diop
   Plage d'ID personnalisés recommandée par Wazuh : 100000-120000.
   Tester avec :  sudo /var/ossec/bin/wazuh-logtest
+
+  Note : "status" est un nom de champ RÉSERVÉ (statique) dans le moteur de
+  règles Wazuh (conflit avec le champ status natif, ex. FIM added/modified/
+  deleted) : il ne peut pas être matché via <field name="status">, il faut
+  utiliser la balise dédiée <status>. Les autres clés du contrat
+  (audit, check, severity, resource, run_id) restent des champs dynamiques
+  standards issus du décodeur JSON générique de Wazuh.
+
+  Validé le 2026-09-10 avec wazuh-logtest v4.14.7 sur tests/fixtures/example-audit.jsonl :
+  severity=high -> rule 110012 (level 10), severity=critical -> rule 110013
+  (level 12), status=PASS -> rule 110001 (level 3).
 -->
 <group name="daily_security_snapshot,">
 
@@ -16,34 +27,34 @@
 
   <rule id="110001" level="3">
     <if_sid>110000</if_sid>
-    <field name="status">^PASS$</field>
+    <status>^PASS$</status>
     <description>DSS: check passed - $(check) on $(resource)</description>
   </rule>
 
   <rule id="110010" level="5">
     <if_sid>110000</if_sid>
-    <field name="status">^FAIL$</field>
+    <status>^FAIL$</status>
     <field name="severity">^low$</field>
     <description>DSS low: $(check) - $(resource)</description>
   </rule>
 
   <rule id="110011" level="7">
     <if_sid>110000</if_sid>
-    <field name="status">^FAIL$</field>
+    <status>^FAIL$</status>
     <field name="severity">^medium$</field>
     <description>DSS medium: $(check) - $(resource)</description>
   </rule>
 
   <rule id="110012" level="10">
     <if_sid>110000</if_sid>
-    <field name="status">^FAIL$</field>
+    <status>^FAIL$</status>
     <field name="severity">^high$</field>
     <description>DSS high: $(check) - $(resource)</description>
   </rule>
 
   <rule id="110013" level="12">
     <if_sid>110000</if_sid>
-    <field name="status">^FAIL$</field>
+    <status>^FAIL$</status>
     <field name="severity">^critical$</field>
     <description>DSS critical: $(check) - $(resource)</description>
   </rule>

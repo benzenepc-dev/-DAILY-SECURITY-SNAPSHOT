@@ -69,6 +69,22 @@ sudo systemctl restart wazuh-manager
 `scripts/install.sh` (propriété de Vincent) rappelle ces deux étapes à la fin
 de l'installation du moteur d'audit.
 
+## Piège rencontré : le champ `status` est réservé
+
+`status` est un nom de champ **statique** dans le moteur de règles Wazuh
+(utilisé nativement, par ex. par les événements FIM `added`/`modified`/
+`deleted`) : il ne peut pas être matché avec `<field name="status">` — Wazuh
+refuse de charger la règle (`Field 'status' is static`). Il faut utiliser la
+balise dédiée `<status>^PASS$</status>` à la place. Les autres clés du contrat
+(`audit`, `check`, `severity`, `resource`, `run_id`) restent des champs
+dynamiques standards et se matchent normalement avec `<field name="...">`.
+
+Validé le 2026-09-10 avec `wazuh-logtest` v4.14.7 sur la VM de démo, avec
+`tests/fixtures/example-audit.jsonl` : `severity=high` → règle `110012`
+(niveau 10), `severity=critical` → règle `110013` (niveau 12),
+`status=PASS` → règle `110001` (niveau 3). Conforme au tableau de la section
+précédente.
+
 ## Vérifier avant de pousser
 
 ```bash
