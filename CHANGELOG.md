@@ -14,7 +14,11 @@ consolide avant chaque merge `develop -> main`.
 - Module network : détection des ports TCP/UDP en écoute hors de `config/allowed_ports.conf` (`scripts/lib/network.sh`, `tests/test_network.sh`).
 - Module services : détection des services legacy/non sécurisés actifs (`scripts/lib/services.sh`, `config/disallowed_services.conf`, `tests/test_services.sh`).
 - Documentation Wazuh (`docs/wazuh.md`) : installation agent/manager, hiérarchie des règles `110000`-`110013`, procédure de test avec `wazuh-logtest`.
-- Documentation transverse `docs/architecture.md` et `docs/testing.md`.
+- Documentation transverse `docs/architecture.md`, `docs/testing.md`, `docs/installation.md`.
+- 6ème contrôle de la roadmap (section 12 du README) : module firewall, détection d'un pare-feu `ufw` inactif (`scripts/lib/firewall.sh`, `tests/test_firewall.sh`, `docs/network.md`).
+
+### Corrigé
+- `tests/test_json.sh` charge désormais `config/audit.conf` avant de tester chaque module : sans ça, `audit_permissions` scannait tout `/` sans exclusions (y compris `/proc`, `/var/lib/docker`) et rendait le job `contract` de la CI très lent.
 
 ## [0.1.0] - à venir
 - Première chaîne complète : Shell -> JSON -> Cron -> Wazuh -> Grafana.

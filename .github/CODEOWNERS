@@ -22,8 +22,13 @@
 # Mamadou Diop — réseau / ports / services / firewall
 /scripts/lib/network.sh         @mamadou-github
 /scripts/lib/services.sh        @mamadou-github
+/scripts/lib/firewall.sh        @mamadou-github
 /config/allowed_ports.conf      @mamadou-github
+/config/disallowed_services.conf @mamadou-github
 /tests/test_network.sh          @mamadou-github
+/tests/test_services.sh         @mamadou-github
+/tests/test_firewall.sh         @mamadou-github
+/docs/network.md                @mamadou-github
 
 # Ahmad Abdou Malick Diop — Wazuh / SIEM
 /wazuh/                         @ahmad-github

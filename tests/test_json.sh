@@ -15,6 +15,13 @@ cd "$(dirname "$0")/.." || exit 1
 # shellcheck source=../scripts/lib/common.sh
 . scripts/lib/common.sh
 
+# Charge les mêmes exclusions que security_audit.sh (AUDIT_EXCLUDE_PATHS,
+# AUDIT_STAY_ON_FS) : sans elles, la section 4 ci-dessous scanne tout "/" sans
+# limite (y compris /proc, /var/lib/docker...) et ce test devient inutilement
+# lent, voire instable, en CI.
+# shellcheck source=/dev/null
+[ -r config/audit.conf ] && . config/audit.conf
+
 VALIDATOR="python3 tests/validate_finding.py"
 command -v python3 >/dev/null 2>&1 || { echo "python3 requis : sudo apt install -y python3"; exit 2; }
 
@@ -58,7 +65,7 @@ else
 fi
 
 echo "== 4. chaque module ne produit que des findings valides sur stdout =="
-for m in permissions network users services; do
+for m in permissions network users services firewall; do
     # shellcheck source=/dev/null
     . "scripts/lib/$m.sh"
     out=$("audit_$m" 2>/dev/null)

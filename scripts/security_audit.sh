@@ -35,7 +35,7 @@ while [ $# -gt 0 ]; do
 done
 
 # Modules d'audit — l'ordre est stable pour que le .jsonl soit lisible
-MODULES="permissions network users services"
+MODULES="permissions network users services firewall"
 
 for m in $MODULES; do
     # shellcheck source=/dev/null
