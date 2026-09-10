@@ -65,6 +65,11 @@ un environnement Windows/Git Bash), les modules concernés remontent
 simplement une sortie vide et le test l'accepte — c'est sur une VM Linux
 (voir `demo/attack-scenarios.md`) que le scan réel doit être vérifié.
 
+## Preuve d'exécution réelle (VM de démo, 2026-09-10)
+
+- [`docs/screenshots/audit-baseline-terminal.png`](screenshots/audit-baseline-terminal.png) — `security_audit.sh` sur système sain : 6/6 checks en PASS.
+- [`docs/screenshots/demo-attack-scenarios-terminal.png`](screenshots/demo-attack-scenarios-terminal.png) — les 3 scénarios de `demo/attack-scenarios.md` injectés puis détectés (3 FAIL exacts, rien d'autre).
+
 ## Ce qui n'est PAS couvert par des tests automatisés
 
 - Les règles Wazuh (`wazuh/manager/local_rules.xml`) : validées avec
